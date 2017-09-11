@@ -4,6 +4,8 @@ include 'param.dat'
 !! generate the stable/equilibrium positions and positional and orientational correlations along with lindemann ratio. 
 !! No of interacting particles and quantum fluctions are already included in the param.dat file. The quantum Boltzmann 
 !! particles are interacting via Coulomb potential, changing it to other potential is easily doable.   
+!! the interacting particles are confined by irregular potential (the parameters are in Votparam.dat)
+!! Changing the potential is easily doable. 
 
 integer :: i,j,ij,ii,t,ipt,jj,indx,n
 integer :: bulk_counter, imtcle
@@ -33,44 +35,21 @@ open(11,file=bocfstrng,status='unknown')                !! file to write the ori
 open(12,file='nrsb_lindamann',status='unknown',position='append')
                                                         !! file to write Lindemann ratio with changing 
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Initial position of Npt particles and their center of mass(cm) and the distances. In this initial position, position
+!!! of each beads are given the same position as the position of center of mass.  
 call Initpos(pos_old,cmpos_old)
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-open(38,file='initial_position_check',status='unknown')
-do i=1,Npt
- write(38,*) cmpos_old(1,i),cmpos_old(2,i)
-enddo
-
- write(38,*) 
-do i=1,Npt
- write(38,*)
- do t=1,tbead
- write(38,*) pos_old(1,t,i),pos_old(2,t,i) 
- enddo 
-enddo 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!	 initial pos of N ptcls and their cm
 call distances()
-!	calculates Npair distance between ptcls
-!	both bead-wise and cm r_pp(tbead,npair), cmr_pp(Npair)
-!
-!	pos_old(Ndim,tbead,Npt) = updated positions on totalno. of beads
-! 	po(Ndim,nb,Npt) = saved positions of `nb' bead before multi-slice
-!	(nb-(time)slice) beads movement 
-!	pn(Ndim,nb,Npt) = updated positions of nb bead after bead movement
-!	nb = total no of beads reorganised by multi-slice move
-
-!!  write(10,*)
-!! do i=1,Npt
-!!  write(10,*) '#',i
-!!  do t=1,tbead
-!!  write(10,*) pos_old(1,t,i),pos_old(2,t,i)
-!!  enddo
-!! enddo 
+!! calculates Npair distance between ptcls both bead-wise and cm r_pp(tbead,npair), cmr_pp(Npair)
+!! pos_old(Ndim,tbead,Npt) = updated positions on total n of beads	
+!! po(Ndim,nb,Npt) = saved positions of `nb' bead before multi-slice (nb-(time)slice) beads movement 
+!! pn(Ndim,nb,Npt) = updated positions of nb bead after bead movement	 
+!!         nb = total no of beads reorganised by multi-slice move	
+ 	
 !-------------density calculation------------------------------
 !---bining for position density calculation below--------------
 xmax = 2.50d0; xmin = -2.5d0
 ymax = 2.5d0; ymin = -2.5d0
-
 incx = (xmax-xmin)/dfloat(Nbin)
 incy = (ymax-ymin)/dfloat(Nbin)
 
@@ -90,6 +69,9 @@ enddo
  cmaccept = 0.d0  ! acceptance ratio of center of mass movement
  indx = 0
 
+!!!!!! In the final iteration, where both the beads and center of mass of the beads are to be moved together. 
+!!!!!! Before the final iteration, we do some iteration over the beads positions as initially every beads are allowed 
+!!!!!! to have the same initial positions. 
 !---------------------------------------------------------------
 !-------before equilibrium run----------------------------------
 do ii=1,nblkeq*nstep
@@ -145,7 +127,7 @@ print*,'equlibrium done'
  
 do ii=1,const*nstep  ! const is an integer factor larger than 1
 !	ensures that that No. of MC passes are cont times eqlb passes
- print*,ii
+ 
  call cmmetro(cmaccept)  ! cm move of the "ring polymers"
 
  do jj=1,nblk
