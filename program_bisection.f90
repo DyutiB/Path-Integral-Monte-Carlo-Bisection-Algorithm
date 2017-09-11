@@ -1,5 +1,9 @@
 program pimc_bisection
 include 'param.dat'
+!! this is the main program for bisection algorithm. All the other subroutines are included with this file. This file will 
+!! generate the stable/equilibrium positions and positional and orientational correlations along with lindemann ratio. 
+!! No of interacting particles and quantum fluctions are already included in the param.dat file. The quantum Boltzmann 
+!! particles are interacting via Coulomb potential, changing it to other potential is easily doable.   
 
 integer :: i,j,ij,ii,t,ipt,jj,indx,n
 integer :: bulk_counter, imtcle
@@ -23,15 +27,11 @@ dia=0.d0; inc=0.d0; div=0.d0
  boostrng = 'boon'//trim(outname)
  bocfstrng = 'ampgbrn'//trim(outname)
 
-open(9,file=denstrng,status='unknown')
-!!open(63,file='2cmposition',status='unknown')
-!!open(68,file='2beadposition',status='unknown')
-!!open(104,file='checkposition',status='unknown')
-!!open(105,file='checkdistance',status='unknown')
-open(10,file=boostrng,status='unknown')
-open(11,file=bocfstrng,status='unknown')
+open(9,file=denstrng,status='unknown')                  !! file to write stable/equilibrium positions
+open(10,file=boostrng,status='unknown')                 !! file to write the Bond-Orientational order after binning
+open(11,file=bocfstrng,status='unknown')                !! file to write the orientational correlation after binning. 
 open(12,file='nrsb_lindamann',status='unknown',position='append')
-
+                                                        !! file to write Lindemann ratio with changing 
 
 call Initpos(pos_old,cmpos_old)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
