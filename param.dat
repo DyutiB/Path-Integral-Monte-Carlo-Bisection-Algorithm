@@ -1,13 +1,21 @@
 implicit none
+!! this file includes all parameter value to run the PIMC algorithm. 
+!! Npt = no of particles and nrsb = quantum fluctuation (Main parameters)
 
-integer, parameter :: nlev=4 
+integer, parameter :: nlev=4                             !! for bisection, no of levels, nb = no of beads. 
 integer, parameter :: nb=2**(nlev-1)+1,Npt=57,Ndim=2,Npair=Npt*(Npt-1)/2, &
-& maxnghbr = Npt
+& maxnghbr = Npt                                         !! Npt = no of particles, maxnghbr = maximun number of neighbors.
 integer, parameter :: nstep=10,nblkeq=10,nblk=10,Nbin=100, &
-& Nbin2=Nbin*Nbin,nghbr=6, const = 100
-double precision,parameter :: nrsb = 0.010d0,lambda=nrsb*nrsb/2.d0, redt=0.0050d0
+& Nbin2=Nbin*Nbin,nghbr=6, const = 100                   !! nstep, nblkeq, nblk = parameters for iteration 
+                                                         !! Nbin = bining for correlations.
+double precision,parameter :: nrsb = 0.010d0,lambda=nrsb*nrsb/2.d0, redt=0.0050d0  
+                                                         !! nrsb = quantum parameter values
+                                                         !! lambda = quantum kinectic energy value. 
+                                                         !! redt = reducted temperature 
 integer, parameter :: lcont=20, tbead = 50, nqmc=tbead
 double precision,parameter :: beta=1/redt, tau=beta/dfloat(tbead), delta=0.01950d0
+                                                         !! delta = displacement parameters for Monte-Carlo algorithm.
+
 double precision :: pos_old(Ndim,tbead,Npt), pn(Ndim,nb,Npt),po(Ndim,nb,Npt), &
   & r_pp(tbead,Npair),rdist(Ndim,tbead,Npair),r_ppmove(nb,Npair), r_ppinit(nb,Npair), &
   & rdist_1pmove(Ndim,nb,Npair),r_pp_save(tbead,Npair),rdist_save(Ndim,tbead,Npair), r_pptrial(tbead,Npair)
@@ -15,7 +23,7 @@ double precision :: cmpos_old(Ndim,Npt),cmpos_new(Ndim,Npt),cmr_pp(Npair), &
   &  cmr_ppsave(Npair),cmrdist(Ndim,Npair), cmrdist_save(Ndim,Npair), &
   & pos_save(Ndim,tbead,Npt)
 double precision :: totKE,totPE,KEcm(Npt),PEcm(Npt), acceptpar(Npt), cmacceptpar(Npt)
-double precision, parameter :: Rad_ini = 4.d0 ! initial radius for generating random configuration
+double precision, parameter :: Rad_ini = 4.d0           !!  initial radius for generating random configuration
 
 logical :: bisec_accept
 logical :: totgr = .true., wrtlnd=.true. , wrtden=.true., wrturl=.true., & 
